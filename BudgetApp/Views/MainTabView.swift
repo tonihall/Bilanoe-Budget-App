@@ -1,34 +1,33 @@
 import SwiftUI
-import SwiftData
 
 struct MainTabView: View {
-    var account: Account
-
     var body: some View {
         TabView {
-            // Dashboard tab
-            DashboardView(account: account)
-                .tabItem {
-                    Label("Dashboard", systemImage: "house.fill")
-                }
+            NavigationStack {
+                DashboardView()
+            }
+            .tabItem { Label("Dashboard", systemImage: "house.fill") }
 
-            // Expenses & Budget tab
-            ExpensesBudgetView(account: account)
-                .tabItem {
-                    Label("Expenses & Budget", systemImage: "list.bullet.rectangle")
-                }
+            NavigationStack {
+                ExpensesBudgetView()
+            }
+            .tabItem { Label("Expenses", systemImage: "list.bullet.rectangle") }
 
-            // Income tab
-            IncomeView(account: account)
-                .tabItem {
-                    Label("Income", systemImage: "dollarsign.circle.fill")
-                }
+            NavigationStack {
+                SubscriptionsView()
+            }
+            .tabItem { Label("Subscriptions", systemImage: "repeat") }
 
-            // Subscriptions tab
-            SubscriptionsView(account: account)
-                .tabItem {
-                    Label("Subscriptions", systemImage: "calendar")
-                }
+            NavigationStack {
+                IncomeView()
+            }
+            .tabItem { Label("Income", systemImage: "dollarsign.circle") }
+
+            NavigationStack {
+                SavingsGoalsView()
+            }
+            .tabItem { Label("Goals", systemImage: "target") }
         }
+        .tint(.pistachio)
     }
 }

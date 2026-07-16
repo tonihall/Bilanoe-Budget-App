@@ -1,32 +1,23 @@
-//
-//  BudgetAppApp.swift
-//  BudgetApp
-//
-//  Created by Toni Hall on 2/23/26.
-//
-
 import SwiftUI
 import SwiftData
 
 @main
 struct BudgetAppApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
+    @StateObject private var auth = AuthManager.shared
 
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(auth)
         }
-        .modelContainer(sharedModelContainer)
+        .modelContainer(for: [
+            Account.self,
+            Expense.self,
+            MonthlyBudget.self,
+            Subscription.self,
+            Income.self,
+            SavingsGoal.self,
+            NetWorthSnapshot.self
+        ])
     }
 }

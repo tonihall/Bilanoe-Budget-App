@@ -24,18 +24,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		08CA06832F4D2D2000E15187 /* Bilancio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bilancio.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		08CA06922F4D2D2100E15187 /* BilancioTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BilancioTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		08CA069C2F4D2D2100E15187 /* BilancioUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BilancioUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		08CA06832F4D2D2000E15187 /* Bilanoe.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bilanoe.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		08CA06922F4D2D2100E15187 /* BilanoeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BilanoeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		08CA069C2F4D2D2100E15187 /* BilanoeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BilanoeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		085CDCC32F523C7100C87AF3 /* Exceptions for "BudgetApp" folder in "Bilancio" target */ = {
+		085CDCC32F523C7100C87AF3 /* Exceptions for "BudgetApp" folder in "Bilanoe" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 08CA06822F4D2D2000E15187 /* Bilancio */;
+			target = 08CA06822F4D2D2000E15187 /* Bilanoe */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -43,7 +43,7 @@
 		08CA06852F4D2D2000E15187 /* BudgetApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				085CDCC32F523C7100C87AF3 /* Exceptions for "BudgetApp" folder in "Bilancio" target */,
+				085CDCC32F523C7100C87AF3 /* Exceptions for "BudgetApp" folder in "Bilanoe" target */,
 			);
 			path = BudgetApp;
 			sourceTree = "<group>";
@@ -98,9 +98,9 @@
 		08CA06842F4D2D2000E15187 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				08CA06832F4D2D2000E15187 /* Bilancio.app */,
-				08CA06922F4D2D2100E15187 /* BilancioTests.xctest */,
-				08CA069C2F4D2D2100E15187 /* BilancioUITests.xctest */,
+				08CA06832F4D2D2000E15187 /* Bilanoe.app */,
+				08CA06922F4D2D2100E15187 /* BilanoeTests.xctest */,
+				08CA069C2F4D2D2100E15187 /* BilanoeUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -108,9 +108,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		08CA06822F4D2D2000E15187 /* Bilancio */ = {
+		08CA06822F4D2D2000E15187 /* Bilanoe */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 08CA06A62F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "Bilancio" */;
+			buildConfigurationList = 08CA06A62F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "Bilanoe" */;
 			buildPhases = (
 				08CA067F2F4D2D2000E15187 /* Sources */,
 				08CA06802F4D2D2000E15187 /* Frameworks */,
@@ -123,16 +123,16 @@
 			fileSystemSynchronizedGroups = (
 				08CA06852F4D2D2000E15187 /* BudgetApp */,
 			);
-			name = Bilancio;
+			name = Bilanoe;
 			packageProductDependencies = (
 			);
 			productName = BudgetApp;
-			productReference = 08CA06832F4D2D2000E15187 /* Bilancio.app */;
+			productReference = 08CA06832F4D2D2000E15187 /* Bilanoe.app */;
 			productType = "com.apple.product-type.application";
 		};
-		08CA06912F4D2D2100E15187 /* BilancioTests */ = {
+		08CA06912F4D2D2100E15187 /* BilanoeTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 08CA06A92F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BilancioTests" */;
+			buildConfigurationList = 08CA06A92F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BilanoeTests" */;
 			buildPhases = (
 				08CA068E2F4D2D2100E15187 /* Sources */,
 				08CA068F2F4D2D2100E15187 /* Frameworks */,
@@ -146,16 +146,16 @@
 			fileSystemSynchronizedGroups = (
 				08CA06952F4D2D2100E15187 /* BudgetAppTests */,
 			);
-			name = BilancioTests;
+			name = BilanoeTests;
 			packageProductDependencies = (
 			);
 			productName = BudgetAppTests;
-			productReference = 08CA06922F4D2D2100E15187 /* BilancioTests.xctest */;
+			productReference = 08CA06922F4D2D2100E15187 /* BilanoeTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		08CA069B2F4D2D2100E15187 /* BilancioUITests */ = {
+		08CA069B2F4D2D2100E15187 /* BilanoeUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 08CA06AC2F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BilancioUITests" */;
+			buildConfigurationList = 08CA06AC2F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BilanoeUITests" */;
 			buildPhases = (
 				08CA06982F4D2D2100E15187 /* Sources */,
 				08CA06992F4D2D2100E15187 /* Frameworks */,
@@ -169,11 +169,11 @@
 			fileSystemSynchronizedGroups = (
 				08CA069F2F4D2D2100E15187 /* BudgetAppUITests */,
 			);
-			name = BilancioUITests;
+			name = BilanoeUITests;
 			packageProductDependencies = (
 			);
 			productName = BudgetAppUITests;
-			productReference = 08CA069C2F4D2D2100E15187 /* BilancioUITests.xctest */;
+			productReference = 08CA069C2F4D2D2100E15187 /* BilanoeUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -199,7 +199,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 08CA067E2F4D2D2000E15187 /* Build configuration list for PBXProject "Bilancio" */;
+			buildConfigurationList = 08CA067E2F4D2D2000E15187 /* Build configuration list for PBXProject "Bilanoe" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -213,9 +213,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				08CA06822F4D2D2000E15187 /* Bilancio */,
-				08CA06912F4D2D2100E15187 /* BilancioTests */,
-				08CA069B2F4D2D2100E15187 /* BilancioUITests */,
+				08CA06822F4D2D2000E15187 /* Bilanoe */,
+				08CA06912F4D2D2100E15187 /* BilanoeTests */,
+				08CA069B2F4D2D2100E15187 /* BilanoeUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -271,12 +271,12 @@
 /* Begin PBXTargetDependency section */
 		08CA06942F4D2D2100E15187 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 08CA06822F4D2D2000E15187 /* Bilancio */;
+			target = 08CA06822F4D2D2000E15187 /* Bilanoe */;
 			targetProxy = 08CA06932F4D2D2100E15187 /* PBXContainerItemProxy */;
 		};
 		08CA069E2F4D2D2100E15187 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 08CA06822F4D2D2000E15187 /* Bilancio */;
+			target = 08CA06822F4D2D2000E15187 /* Bilanoe */;
 			targetProxy = 08CA069D2F4D2D2100E15187 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -412,7 +412,7 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BudgetApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Bilancio;
+				INFOPLIST_KEY_CFBundleDisplayName = Bilanoe;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -458,7 +458,7 @@
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = BudgetApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Bilancio;
+				INFOPLIST_KEY_CFBundleDisplayName = Bilanoe;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -511,7 +511,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bilancio.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Bilancio";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bilanoe.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Bilanoe";
 				XROS_DEPLOYMENT_TARGET = 26.1;
 			};
 			name = Debug;
@@ -537,7 +537,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bilancio.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Bilancio";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bilanoe.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Bilanoe";
 				XROS_DEPLOYMENT_TARGET = 26.1;
 			};
 			name = Release;
@@ -595,7 +595,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		08CA067E2F4D2D2000E15187 /* Build configuration list for PBXProject "Bilancio" */ = {
+		08CA067E2F4D2D2000E15187 /* Build configuration list for PBXProject "Bilanoe" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				08CA06A42F4D2D2100E15187 /* Debug */,
@@ -604,7 +604,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		08CA06A62F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "Bilancio" */ = {
+		08CA06A62F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "Bilanoe" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				08CA06A72F4D2D2100E15187 /* Debug */,
@@ -613,7 +613,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		08CA06A92F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BilancioTests" */ = {
+		08CA06A92F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BilanoeTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				08CA06AA2F4D2D2100E15187 /* Debug */,
@@ -622,7 +622,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		08CA06AC2F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BilancioUITests" */ = {
+		08CA06AC2F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BilanoeUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				08CA06AD2F4D2D2100E15187 /* Debug */,
