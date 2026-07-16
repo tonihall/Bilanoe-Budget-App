@@ -24,14 +24,27 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		08CA06832F4D2D2000E15187 /* BudgetApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BudgetApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		08CA06922F4D2D2100E15187 /* BudgetAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BudgetAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		08CA069C2F4D2D2100E15187 /* BudgetAppUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BudgetAppUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		08CA06832F4D2D2000E15187 /* Bilancio.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Bilancio.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		08CA06922F4D2D2100E15187 /* BilancioTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BilancioTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		08CA069C2F4D2D2100E15187 /* BilancioUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BilancioUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		085CDCC32F523C7100C87AF3 /* Exceptions for "BudgetApp" folder in "Bilancio" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 08CA06822F4D2D2000E15187 /* Bilancio */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		08CA06852F4D2D2000E15187 /* BudgetApp */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				085CDCC32F523C7100C87AF3 /* Exceptions for "BudgetApp" folder in "Bilancio" target */,
+			);
 			path = BudgetApp;
 			sourceTree = "<group>";
 		};
@@ -85,9 +98,9 @@
 		08CA06842F4D2D2000E15187 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				08CA06832F4D2D2000E15187 /* BudgetApp.app */,
-				08CA06922F4D2D2100E15187 /* BudgetAppTests.xctest */,
-				08CA069C2F4D2D2100E15187 /* BudgetAppUITests.xctest */,
+				08CA06832F4D2D2000E15187 /* Bilancio.app */,
+				08CA06922F4D2D2100E15187 /* BilancioTests.xctest */,
+				08CA069C2F4D2D2100E15187 /* BilancioUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -95,9 +108,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		08CA06822F4D2D2000E15187 /* BudgetApp */ = {
+		08CA06822F4D2D2000E15187 /* Bilancio */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 08CA06A62F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BudgetApp" */;
+			buildConfigurationList = 08CA06A62F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "Bilancio" */;
 			buildPhases = (
 				08CA067F2F4D2D2000E15187 /* Sources */,
 				08CA06802F4D2D2000E15187 /* Frameworks */,
@@ -110,16 +123,16 @@
 			fileSystemSynchronizedGroups = (
 				08CA06852F4D2D2000E15187 /* BudgetApp */,
 			);
-			name = BudgetApp;
+			name = Bilancio;
 			packageProductDependencies = (
 			);
 			productName = BudgetApp;
-			productReference = 08CA06832F4D2D2000E15187 /* BudgetApp.app */;
+			productReference = 08CA06832F4D2D2000E15187 /* Bilancio.app */;
 			productType = "com.apple.product-type.application";
 		};
-		08CA06912F4D2D2100E15187 /* BudgetAppTests */ = {
+		08CA06912F4D2D2100E15187 /* BilancioTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 08CA06A92F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BudgetAppTests" */;
+			buildConfigurationList = 08CA06A92F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BilancioTests" */;
 			buildPhases = (
 				08CA068E2F4D2D2100E15187 /* Sources */,
 				08CA068F2F4D2D2100E15187 /* Frameworks */,
@@ -133,16 +146,16 @@
 			fileSystemSynchronizedGroups = (
 				08CA06952F4D2D2100E15187 /* BudgetAppTests */,
 			);
-			name = BudgetAppTests;
+			name = BilancioTests;
 			packageProductDependencies = (
 			);
 			productName = BudgetAppTests;
-			productReference = 08CA06922F4D2D2100E15187 /* BudgetAppTests.xctest */;
+			productReference = 08CA06922F4D2D2100E15187 /* BilancioTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		08CA069B2F4D2D2100E15187 /* BudgetAppUITests */ = {
+		08CA069B2F4D2D2100E15187 /* BilancioUITests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 08CA06AC2F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BudgetAppUITests" */;
+			buildConfigurationList = 08CA06AC2F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BilancioUITests" */;
 			buildPhases = (
 				08CA06982F4D2D2100E15187 /* Sources */,
 				08CA06992F4D2D2100E15187 /* Frameworks */,
@@ -156,11 +169,11 @@
 			fileSystemSynchronizedGroups = (
 				08CA069F2F4D2D2100E15187 /* BudgetAppUITests */,
 			);
-			name = BudgetAppUITests;
+			name = BilancioUITests;
 			packageProductDependencies = (
 			);
 			productName = BudgetAppUITests;
-			productReference = 08CA069C2F4D2D2100E15187 /* BudgetAppUITests.xctest */;
+			productReference = 08CA069C2F4D2D2100E15187 /* BilancioUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
@@ -186,7 +199,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 08CA067E2F4D2D2000E15187 /* Build configuration list for PBXProject "BudgetApp" */;
+			buildConfigurationList = 08CA067E2F4D2D2000E15187 /* Build configuration list for PBXProject "Bilancio" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -200,9 +213,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				08CA06822F4D2D2000E15187 /* BudgetApp */,
-				08CA06912F4D2D2100E15187 /* BudgetAppTests */,
-				08CA069B2F4D2D2100E15187 /* BudgetAppUITests */,
+				08CA06822F4D2D2000E15187 /* Bilancio */,
+				08CA06912F4D2D2100E15187 /* BilancioTests */,
+				08CA069B2F4D2D2100E15187 /* BilancioUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -258,12 +271,12 @@
 /* Begin PBXTargetDependency section */
 		08CA06942F4D2D2100E15187 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 08CA06822F4D2D2000E15187 /* BudgetApp */;
+			target = 08CA06822F4D2D2000E15187 /* Bilancio */;
 			targetProxy = 08CA06932F4D2D2100E15187 /* PBXContainerItemProxy */;
 		};
 		08CA069E2F4D2D2100E15187 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 08CA06822F4D2D2000E15187 /* BudgetApp */;
+			target = 08CA06822F4D2D2000E15187 /* Bilancio */;
 			targetProxy = 08CA069D2F4D2D2100E15187 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -398,6 +411,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BudgetApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Bilancio;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -442,6 +457,8 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = BudgetApp/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Bilancio;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -494,7 +511,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BudgetApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BudgetApp";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bilancio.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Bilancio";
 				XROS_DEPLOYMENT_TARGET = 26.1;
 			};
 			name = Debug;
@@ -520,7 +537,7 @@
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/BudgetApp.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/BudgetApp";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Bilancio.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Bilancio";
 				XROS_DEPLOYMENT_TARGET = 26.1;
 			};
 			name = Release;
@@ -578,7 +595,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		08CA067E2F4D2D2000E15187 /* Build configuration list for PBXProject "BudgetApp" */ = {
+		08CA067E2F4D2D2000E15187 /* Build configuration list for PBXProject "Bilancio" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				08CA06A42F4D2D2100E15187 /* Debug */,
@@ -587,7 +604,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		08CA06A62F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BudgetApp" */ = {
+		08CA06A62F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "Bilancio" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				08CA06A72F4D2D2100E15187 /* Debug */,
@@ -596,7 +613,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		08CA06A92F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BudgetAppTests" */ = {
+		08CA06A92F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BilancioTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				08CA06AA2F4D2D2100E15187 /* Debug */,
@@ -605,7 +622,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		08CA06AC2F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BudgetAppUITests" */ = {
+		08CA06AC2F4D2D2100E15187 /* Build configuration list for PBXNativeTarget "BilancioUITests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				08CA06AD2F4D2D2100E15187 /* Debug */,
