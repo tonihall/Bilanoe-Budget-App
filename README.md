@@ -89,6 +89,23 @@ Bilanoe was designed to provide a simple and intuitive way for users to understa
 - Custom empty states
 - Notification support for overdue subscriptions
 
+## Screenshots
+
+### Dashboard
+<img src="Dashboard.png" width="250">
+
+### Expenses
+<img src="Expenses.png" width="250">
+
+### Income
+<img src="Income.png" width="250">
+
+### Savings Goals
+<img src="SavingsGoal.png" width="250">
+
+### Subscriptions
+<img src="Subscriptions.png" width="250">
+
 ## Technologies Used
 
 - Swift
