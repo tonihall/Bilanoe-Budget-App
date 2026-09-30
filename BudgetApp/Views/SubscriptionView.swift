@@ -28,20 +28,26 @@ struct SubscriptionsView: View {
         return activeSubscriptions.filter { $0.dueDate >= Date() && $0.dueDate <= weekEnd }
     }
     var overdue: [Subscription]  { activeSubscriptions.filter { $0.dueDate < Date() } }
-    var monthlyTotal: Double     { activeSubscriptions.reduce(0) { $0 + $1.amount } }
-    var yearlyTotal: Double {
-        let now = Date(); let yearEnd = Calendar.current.date(byAdding: .year, value: 1, to: now)!
-        return activeSubscriptions.reduce(0) { total, sub in
-            let effectiveEnd = min(sub.endDate ?? yearEnd, yearEnd)
-            let months = max(0, Calendar.current.dateComponents([.month], from: now, to: effectiveEnd).month ?? 0)
-            return total + (sub.amount * Double(months))
-        }
+    var laterBills: [Subscription] {
+        let urgentIDs = Set(overdue.map(\.id) + dueThisWeek.map(\.id))
+        return activeSubscriptions.filter { !urgentIDs.contains($0.id) }
     }
+    var monthlyTotal: Double     { activeSubscriptions.reduce(0) { $0 + $1.amount } }
 
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                monthlyTotalView
+                billSummaryView
+
+                Button { showAddSubscription = true } label: {
+                    Label("Add bill", systemImage: "plus.circle.fill")
+                        .font(.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                }
+                .foregroundColor(.white)
+                .background(Color.pistachioText)
+                .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
 
                 if showPaidBanner {
                     HStack(spacing: 10) {
@@ -66,16 +72,15 @@ struct SubscriptionsView: View {
                     }
                 }
 
-                sectionHeader("All Subscriptions")
                 if activeSubscriptions.isEmpty {
-                    EmptyStateView(icon: "calendar.badge.plus", title: "No Subscriptions Yet",
-                        message: "Track Netflix, Spotify, rent — anything that bills you regularly.")
+                    EmptyStateView(icon: "calendar.badge.plus", title: "No Bills Yet",
+                        message: "Add rent, utilities, subscriptions, or anything that repeats every month.")
                         .padding()
-                        .background(Color(UIColor.secondarySystemBackground))
-                        .cornerRadius(16)
-                } else {
+                        .bilanoeCard()
+                } else if !laterBills.isEmpty {
+                    sectionHeader(overdue.isEmpty && dueThisWeek.isEmpty ? "Next up" : "Later")
                     List {
-                        ForEach(activeSubscriptions) { sub in
+                        ForEach(laterBills) { sub in
                             SubscriptionCard(sub: sub, urgent: false, isOverdue: false) { initiatePay(sub) }
                                 .listRowInsets(EdgeInsets()).listRowBackground(Color.clear).padding(.vertical, 4)
                                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
@@ -90,20 +95,14 @@ struct SubscriptionsView: View {
                         }
                     }
                     .listStyle(.plain).scrollDisabled(true)
-                    .frame(minHeight: CGFloat(activeSubscriptions.count) * 88)
+                    .frame(minHeight: CGFloat(laterBills.count) * 88)
                 }
                 Spacer(minLength: 40)
             }
             .padding()
         }
-        .navigationTitle("Subscriptions")
+        .navigationTitle("Bills")
         .errorAlert(error: $error)
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button { showAddSubscription = true } label: { Image(systemName: "plus") }
-                    .foregroundColor(.pistachio)
-            }
-        }
         .onAppear { if notificationsOn { NotificationManager.shared.scheduleAll(subscriptions: activeSubscriptions) } }
         .sheet(isPresented: $showAddSubscription) {
             AddSubscriptionView { name, amount, dueDate, endDate in
@@ -123,11 +122,11 @@ struct SubscriptionsView: View {
         .sheet(item: $subToPay) { sub in
             NavigationStack {
                 Form {
-                    Section("Subscription") {
+                    Section("Bill") {
                         HStack {
                             Text(sub.name).font(.headline)
                             Spacer()
-                            Text(sub.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
+                            Text(sub.amount, format: .currency(code: CurrencyFormat.code))
                                 .bold().foregroundColor(.wineRed)
                         }
                         HStack {
@@ -138,15 +137,15 @@ struct SubscriptionsView: View {
                     }
                     Section("Pay From") {
                         if accounts.isEmpty {
-                            Text("No accounts — add one on the Dashboard first").font(.caption).foregroundColor(.secondary)
+                            Text("No accounts — add one on Home first").font(.caption).foregroundColor(.secondary)
                         } else {
                             Picker("Account", selection: $selectedPayAccount) {
                                 ForEach(accounts) { account in
                                     HStack {
                                         Text(account.name)
                                         Spacer()
-                                        Text(account.balance, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-                                    }.tag(account.name)
+                                        Text(account.balance, format: .currency(code: CurrencyFormat.code))
+                                    }.tag(account.uuid)
                                 }
                             }
                             .pickerStyle(.inline)
@@ -159,7 +158,7 @@ struct SubscriptionsView: View {
                             Text(nextDueDate(from: sub.dueDate), style: .date).foregroundColor(.pistachio)
                         }
                     } footer: {
-                        Text("Paying will deduct \(sub.amount, specifier: "%.2f") from your account, log it as an expense, and roll the due date forward 1 month.")
+                        Text("Paying will deduct \(sub.amount, format: .currency(code: CurrencyFormat.code)) from your account, log it as an expense, and roll the due date forward 1 month.")
                     }
                 }
                 .navigationTitle("Mark as Paid")
@@ -178,23 +177,25 @@ struct SubscriptionsView: View {
         }
     }
 
-    private var monthlyTotalView: some View {
+    private var billSummaryView: some View {
         HStack {
             VStack(alignment: .leading, spacing: 4) {
-                Text("Monthly Total").font(.subheadline).foregroundColor(.secondary)
-                Text(monthlyTotal, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-                    .font(.system(size: 32, weight: .bold))
+                Text("Bills each month").font(.subheadline).foregroundColor(.secondary)
+                Text(monthlyTotal, format: .currency(code: CurrencyFormat.code))
+                    .font(.title2.weight(.bold))
             }
             Spacer()
             VStack(alignment: .trailing, spacing: 4) {
-                Text("Yearly").font(.subheadline).foregroundColor(.secondary)
-                Text(yearlyTotal, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-                    .font(.title3).bold().foregroundColor(.secondary)
+                Text(!overdue.isEmpty
+                    ? "\(overdue.count) overdue"
+                    : dueThisWeek.isEmpty ? "No bills due this week" : "\(dueThisWeek.count) due this week")
+                    .font(.caption)
+                    .foregroundColor(!overdue.isEmpty ? .wineRed : dueThisWeek.isEmpty ? .secondary : .orange)
+                    .multilineTextAlignment(.trailing)
             }
         }
         .padding()
-        .background(Color(UIColor.secondarySystemBackground))
-        .cornerRadius(16)
+        .bilanoeCard()
     }
 
     private func sectionHeader(_ title: String) -> some View {
@@ -202,7 +203,7 @@ struct SubscriptionsView: View {
     }
 
     private func initiatePay(_ sub: Subscription) {
-        selectedPayAccount = accounts.first?.name ?? ""
+        selectedPayAccount = accounts.first?.uuid ?? ""
         subToPay = sub
     }
 
@@ -211,10 +212,14 @@ struct SubscriptionsView: View {
     }
 
     private func markAsPaid(_ sub: Subscription) {
-        if let account = accounts.first(where: { $0.name == selectedPayAccount }) {
-            account.type == "Credit Card" ? (account.balance += sub.amount) : (account.balance -= sub.amount)
+        guard let account = AccountLedger.account(id: selectedPayAccount, in: accounts) else {
+            error = .noAccountSelected
+            return
         }
-        modelContext.insert(Expense(userID: auth.userID, name: sub.name, amount: sub.amount, date: Date(), category: "Subscriptions", accountName: selectedPayAccount))
+        let expense = Expense(userID: auth.userID, name: sub.name, amount: sub.amount, date: Date(),
+                              category: "Subscriptions", accountName: account.name, accountID: account.uuid)
+        AccountLedger.applyExpense(expense, accounts: accounts)
+        modelContext.insert(expense)
         sub.dueDate = nextDueDate(from: sub.dueDate)
         if notificationsOn { NotificationManager.shared.scheduleReminder(for: sub) }
         do {
@@ -223,97 +228,5 @@ struct SubscriptionsView: View {
             withAnimation { showPaidBanner = true }
             DispatchQueue.main.asyncAfter(deadline: .now() + 3) { withAnimation { showPaidBanner = false } }
         } catch { self.error = .saveFailed }
-    }
-}
-
-// MARK: - Subscription Card
-
-struct SubscriptionCard: View {
-    var sub: Subscription
-    var urgent: Bool
-    var isOverdue: Bool
-    var onMarkPaid: () -> Void
-
-    var daysUntilDue: Int { Calendar.current.dateComponents([.day], from: Date(), to: sub.dueDate).day ?? 0 }
-    var statusColor: Color { isOverdue ? .wineRed : urgent ? .orange : .secondary }
-    var statusText: String {
-        if isOverdue { return "Overdue by \(abs(daysUntilDue)) day\(abs(daysUntilDue) == 1 ? "" : "s")" }
-        if urgent    { return "Due in \(daysUntilDue) day\(daysUntilDue == 1 ? "" : "s")" }
-        return sub.dueDate.formatted(date: .abbreviated, time: .omitted)
-    }
-
-    var body: some View {
-        HStack(spacing: 14) {
-            ZStack {
-                Circle()
-                    .fill(statusColor.opacity(0.1))
-                    .frame(width: 42, height: 42)
-                Image(systemName: isOverdue ? "exclamationmark.circle.fill" : urgent ? "bell.fill" : "repeat")
-                    .foregroundColor(statusColor).font(.system(size: 16))
-            }
-            VStack(alignment: .leading, spacing: 3) {
-                Text(sub.name).font(.subheadline).fontWeight(.medium)
-                Text(statusText).font(.caption).foregroundColor(statusColor)
-            }
-            Spacer()
-            VStack(alignment: .trailing, spacing: 6) {
-                Text(sub.amount, format: .currency(code: Locale.current.currency?.identifier ?? "USD"))
-                    .font(.subheadline).fontWeight(.semibold)
-                    .foregroundColor(isOverdue ? .wineRed : .primary)
-                Button { onMarkPaid() } label: {
-                    Text("Pay")
-                        .font(.caption).fontWeight(.semibold)
-                        .padding(.horizontal, 12).padding(.vertical, 5)
-                        .background(Color.pistachioSubtle)
-                        .foregroundColor(.pistachioText)
-                        .cornerRadius(20)
-                }
-            }
-        }
-        .padding()
-        .background(Color(UIColor.secondarySystemBackground))
-        .cornerRadius(14)
-    }
-}
-
-// MARK: - Add Subscription
-
-struct AddSubscriptionView: View {
-    @Environment(\.dismiss) private var dismiss
-    var onSave: (String, Double, Date, Date?) -> Void
-    @State private var name = ""
-    @State private var amount = ""
-    @State private var dueDate = Date()
-    @State private var hasEndDate = false
-    @State private var endDate = Date()
-
-    var body: some View {
-        NavigationStack {
-            Form {
-                Section("Details") {
-                    TextField("Subscription Name", text: $name)
-                    TextField("Monthly Amount", text: $amount).keyboardType(.decimalPad)
-                }
-                Section("Dates") {
-                    DatePicker("Next Due Date", selection: $dueDate, displayedComponents: .date)
-                    Toggle("Has End Date", isOn: $hasEndDate)
-                    if hasEndDate { DatePicker("End Date", selection: $endDate, displayedComponents: .date) }
-                }
-            }
-            .navigationTitle("Add Subscription")
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        guard let amt = Double(amount), amt > 0 else { return }
-                        onSave(name, amt, dueDate, hasEndDate ? endDate : nil); dismiss()
-                    }
-                    .disabled(name.isEmpty || amount.isEmpty)
-                    .foregroundColor(.pistachio)
-                }
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }.foregroundColor(.pistachio)
-                }
-            }
-        }
     }
 }

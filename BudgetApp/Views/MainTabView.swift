@@ -1,32 +1,29 @@
 import SwiftUI
 
 struct MainTabView: View {
+    @EnvironmentObject private var auth: AuthManager
+
     var body: some View {
         TabView {
             NavigationStack {
-                DashboardView()
+                DashboardView(userID: auth.userID)
             }
-            .tabItem { Label("Dashboard", systemImage: "house.fill") }
+            .tabItem { Label("Home", systemImage: "house.fill") }
 
             NavigationStack {
                 ExpensesBudgetView()
             }
-            .tabItem { Label("Expenses", systemImage: "list.bullet.rectangle") }
+            .tabItem { Label("Spending", systemImage: "list.bullet.rectangle") }
 
             NavigationStack {
                 SubscriptionsView()
             }
-            .tabItem { Label("Subscriptions", systemImage: "repeat") }
+            .tabItem { Label("Bills", systemImage: "repeat") }
 
             NavigationStack {
-                IncomeView()
+                PlanView()
             }
-            .tabItem { Label("Income", systemImage: "dollarsign.circle") }
-
-            NavigationStack {
-                SavingsGoalsView()
-            }
-            .tabItem { Label("Goals", systemImage: "target") }
+            .tabItem { Label("Plan", systemImage: "target") }
         }
         .tint(.pistachio)
     }

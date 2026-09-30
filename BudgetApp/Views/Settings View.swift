@@ -13,6 +13,7 @@ struct SettingsView: View {
     @Query private var allSubscriptions: [Subscription]
     @Query private var allIncomes: [Income]
     @Query private var allGoals: [SavingsGoal]
+    @Query private var allSnapshots: [NetWorthSnapshot]
 
     var accounts: [Account]           { allAccounts.filter      { $0.userID == auth.userID } }
     var expenses: [Expense]           { allExpenses.filter      { $0.userID == auth.userID } }
@@ -20,6 +21,7 @@ struct SettingsView: View {
     var subscriptions: [Subscription] { allSubscriptions.filter { $0.userID == auth.userID } }
     var incomes: [Income]             { allIncomes.filter       { $0.userID == auth.userID } }
     var goals: [SavingsGoal]          { allGoals.filter         { $0.userID == auth.userID } }
+    var snapshots: [NetWorthSnapshot] { allSnapshots.filter     { $0.userID == auth.userID } }
 
     @AppStorage("budgetMode")     var budgetMode: String = "weekly"
     @AppStorage("defaultAccount") var defaultAccount: String = ""
@@ -31,13 +33,13 @@ struct SettingsView: View {
 
     @State private var notifPermissionDenied = false
     @State private var showClearConfirm = false
+    @State private var error: AppError? = nil
 
     var body: some View {
         NavigationStack {
             Form {
 
-                // MARK: Account
-                Section {
+                Section("Your profile") {
                     HStack {
                         ZStack {
                             RoundedRectangle(cornerRadius: 10)
@@ -53,7 +55,6 @@ struct SettingsView: View {
                     .padding(.vertical, 4)
                 }
 
-                // MARK: Preferences
                 Section("Preferences") {
                     Picker("Budget Mode", selection: $selectedBudgetMode) {
                         Text("Weekly").tag("weekly")
@@ -63,17 +64,16 @@ struct SettingsView: View {
                     .onChange(of: selectedBudgetMode) { _, val in budgetMode = val }
 
                     if !accounts.isEmpty {
-                        Picker("Default Account", selection: $selectedDefaultAccount) {
+                        Picker("Everyday account", selection: $selectedDefaultAccount) {
                             Text("None").tag("")
-                            ForEach(accounts) { Text($0.name).tag($0.name) }
+                            ForEach(accounts) { Text($0.name).tag($0.uuid) }
                         }
                         .onChange(of: selectedDefaultAccount) { _, val in defaultAccount = val }
                     }
                 }
 
-                // MARK: Notifications
                 Section {
-                    Toggle("Subscription Reminders", isOn: $notificationsOn)
+                    Toggle("Bill reminders", isOn: $notificationsOn)
                         .tint(.pistachio)
                         .onChange(of: notificationsOn) { _, enabled in
                             if enabled {
@@ -94,38 +94,33 @@ struct SettingsView: View {
                         HStack(spacing: 8) {
                             Image(systemName: "exclamationmark.triangle.fill").foregroundColor(.orange)
                             Text("Notifications are disabled. Go to Settings → Notifications → Bilanoe to enable.")
-                                .font(.caption).foregroundColor(.secondary)
+                            .font(.caption).foregroundColor(.secondary)
                         }
                     }
+                    Toggle("Haptic feedback", isOn: $hapticsOn)
+                        .tint(.pistachio)
                 } header: {
-                    Text("Notifications")
+                    Text("Alerts & feedback")
                 } footer: {
-                    Text("Get a reminder the day before each subscription is due.")
+                    Text("Get a reminder the day before each bill is due.")
                 }
 
-                // MARK: Haptics
-                Section {
-                    Toggle("Haptic Feedback", isOn: $hapticsOn).tint(.pistachio)
-                } header: {
-                    Text("Haptics")
-                } footer: {
-                    Text("Vibrations when saving, deleting, and completing actions.")
-                }
-
-                // MARK: Danger Zone
-                Section {
-                    Button(role: .destructive) { showClearConfirm = true } label: {
-                        Label("Clear All My Data", systemImage: "trash")
-                    }
-                    Button(role: .destructive) {
+                Section("Account") {
+                    Button {
                         NotificationManager.shared.cancelAll()
                         auth.logOut()
                         dismiss()
                     } label: {
-                        Label("Log Out", systemImage: "rectangle.portrait.and.arrow.right")
+                        Label("Log out", systemImage: "rectangle.portrait.and.arrow.right")
                     }
-                } header: {
-                    Text("Account")
+                }
+
+                Section("Data") {
+                    Button(role: .destructive) { showClearConfirm = true } label: {
+                        Label("Delete all app data", systemImage: "trash")
+                    }
+                } footer: {
+                    Text("This permanently deletes all saved financial data from this device.")
                 }
 
                 // MARK: App Info
@@ -144,8 +139,9 @@ struct SettingsView: View {
                     Text("About")
                 }
             }
-            .navigationTitle("Settings")
+            .navigationTitle("Preferences")
             .navigationBarTitleDisplayMode(.inline)
+            .errorAlert(error: $error)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Done") { dismiss() }.foregroundColor(.pistachio)
@@ -153,7 +149,13 @@ struct SettingsView: View {
             }
             .onAppear {
                 selectedBudgetMode = budgetMode
-                selectedDefaultAccount = defaultAccount
+                let resolvedDefaultAccount = accounts.first { $0.uuid == defaultAccount }
+                    ?? accounts.first { $0.name == defaultAccount }
+                selectedDefaultAccount = resolvedDefaultAccount?.uuid ?? ""
+                // Older app versions stored the account name. Persist the stable ID once found.
+                if let resolvedDefaultAccount {
+                    defaultAccount = resolvedDefaultAccount.uuid
+                }
                 NotificationManager.shared.checkPermission { granted in
                     if !granted && notificationsOn {
                         notificationsOn = false
@@ -163,19 +165,33 @@ struct SettingsView: View {
             }
             .alert("Clear All Data?", isPresented: $showClearConfirm) {
                 Button("Clear Everything", role: .destructive) {
-                    NotificationManager.shared.cancelAll()
-                    (accounts + []).forEach { modelContext.delete($0) }
-                    expenses.forEach     { modelContext.delete($0) }
-                    budgets.forEach      { modelContext.delete($0) }
-                    subscriptions.forEach{ modelContext.delete($0) }
-                    incomes.forEach      { modelContext.delete($0) }
-                    goals.forEach        { modelContext.delete($0) }
-                    try? modelContext.save()
+                    clearUserData()
                 }
                 Button("Cancel", role: .cancel) { }
             } message: {
                 Text("This will permanently delete all your accounts, expenses, budgets, subscriptions, income history, and goals. This cannot be undone.")
             }
+       }
+   }
+
+    private func clearUserData() {
+        NotificationManager.shared.cancelAll()
+        accounts.forEach { modelContext.delete($0) }
+        expenses.forEach { modelContext.delete($0) }
+        budgets.forEach { modelContext.delete($0) }
+        subscriptions.forEach { modelContext.delete($0) }
+        incomes.forEach { modelContext.delete($0) }
+        goals.forEach { modelContext.delete($0) }
+        snapshots.forEach { modelContext.delete($0) }
+
+        do {
+            try modelContext.safeSave()
+            defaultAccount = ""
+            selectedDefaultAccount = ""
+            HapticManager.heavy()
+        } catch {
+            self.error = .saveFailed
+            HapticManager.error()
         }
     }
 }

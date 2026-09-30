@@ -20,4 +20,28 @@ extension Color {
 
     /// Burnt orange — checking
     static let burntOrange = Color(red: 0.80, green: 0.33, blue: 0.00)
+
+    static let appSurface = Color(UIColor.secondarySystemBackground)
+    static let appSurfaceElevated = Color(UIColor.tertiarySystemBackground)
+}
+
+enum CurrencyFormat {
+    static let code = Locale.current.currency?.identifier ?? "USD"
+}
+
+struct BilanoeCardModifier: ViewModifier {
+    var radius: CGFloat = 16
+    var elevated = false
+
+    func body(content: Content) -> some View {
+        content
+            .background(elevated ? Color.appSurfaceElevated : Color.appSurface)
+            .clipShape(RoundedRectangle(cornerRadius: radius, style: .continuous))
+    }
+}
+
+extension View {
+    func bilanoeCard(radius: CGFloat = 16, elevated: Bool = false) -> some View {
+        modifier(BilanoeCardModifier(radius: radius, elevated: elevated))
+    }
 }

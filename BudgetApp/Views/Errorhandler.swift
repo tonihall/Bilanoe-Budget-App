@@ -30,11 +30,20 @@ struct ErrorAlertModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .alert("Something Went Wrong", isPresented: .constant(error != nil), presenting: error) { _ in
+            .alert("Something Went Wrong", isPresented: presentationBinding, presenting: error) { _ in
                 Button("OK", role: .cancel) { error = nil }
             } message: { err in
                 Text(err.errorDescription ?? "An unknown error occurred.")
             }
+    }
+
+    private var presentationBinding: Binding<Bool> {
+        Binding(
+            get: { error != nil },
+            set: { isPresented in
+                if !isPresented { error = nil }
+            }
+        )
     }
 }
 
@@ -51,7 +60,7 @@ extension ModelContext {
         do {
             try save()
         } catch {
-            throw AppError.saveFailed
+            throw AppError.custom(error.localizedDescription)
         }
     }
 }

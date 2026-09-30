@@ -6,6 +6,11 @@ struct LoginView: View {
     @State private var password = ""
     @State private var errorMessage = ""
     @State private var showSignup = false
+    @FocusState private var focusedField: Field?
+
+    private enum Field {
+        case username, password
+    }
 
     var body: some View {
         NavigationStack {
@@ -28,25 +33,28 @@ struct LoginView: View {
                     BilanoeTextField(icon: "person", placeholder: "Username", text: $username)
                         .textInputAutocapitalization(.never)
                         .autocorrectionDisabled()
+                        .textContentType(.username)
+                        .focused($focusedField, equals: .username)
+                        .submitLabel(.next)
+                        .onSubmit { focusedField = .password }
                     BilanoeTextField(icon: "lock", placeholder: "Password", text: $password, isSecure: true)
+                        .textContentType(.password)
+                        .focused($focusedField, equals: .password)
+                        .submitLabel(.go)
+                        .onSubmit { signIn() }
                 }
                 .padding(.horizontal, 28)
 
                 if !errorMessage.isEmpty {
                     Text(errorMessage)
-                        .font(.caption).foregroundColor(.red)
+                        .font(.caption).foregroundColor(.wineRed)
                         .padding(.top, 10).padding(.horizontal, 28)
+                        .accessibilityAddTraits(.isStaticText)
                 }
 
                 // Sign in button
                 Button {
-                    do {
-                        try auth.logIn(username: username, password: password)
-                    } catch let e as AuthError {
-                        errorMessage = e.errorDescription ?? "Login failed."
-                    } catch {
-                        errorMessage = "Login failed. Please try again."
-                    }
+                    signIn()
                 } label: {
                     Text("Sign In")
                         .font(.system(size: 16, weight: .semibold))
@@ -73,6 +81,19 @@ struct LoginView: View {
                 Spacer()
             }
             .sheet(isPresented: $showSignup) { SignupView() }
+            .onChange(of: username) { _ in errorMessage = "" }
+            .onChange(of: password) { _ in errorMessage = "" }
+        }
+    }
+
+    private func signIn() {
+        guard !username.isEmpty, !password.isEmpty else { return }
+        do {
+            try auth.logIn(username: username, password: password)
+        } catch let e as AuthError {
+            errorMessage = e.errorDescription ?? "Login failed."
+        } catch {
+            errorMessage = "Login failed. Please try again."
         }
     }
 }
@@ -98,5 +119,6 @@ struct BilanoeTextField: View {
         .background(Color(UIColor.secondarySystemBackground))
         .cornerRadius(12)
         .overlay(RoundedRectangle(cornerRadius: 12).stroke(Color.secondary.opacity(0.15), lineWidth: 1))
+        .accessibilityElement(children: .combine)
     }
 }

@@ -66,7 +66,7 @@ struct OnboardingView: View {
                         HStack(spacing: 10) {
                             Text(currentPage < pages.count - 1 ? "Next" : "Get Started")
                                 .font(.system(size: 17, weight: .semibold))
-                                .foregroundColor(currentPage == pages.count - 1 ? .black : .black)
+                                .foregroundColor(.black)
                             Image(systemName: currentPage < pages.count - 1 ? "arrow.right" : "checkmark")
                                 .font(.system(size: 15, weight: .semibold))
                                 .foregroundColor(.black)
@@ -76,6 +76,7 @@ struct OnboardingView: View {
                         .background(currentPage == pages.count - 1 ? Color.pistachio : Color.white)
                         .cornerRadius(16)
                     }
+                    .accessibilityHint(currentPage < pages.count - 1 ? "Shows the next introduction screen" : "Finishes setup and opens sign in")
 
                     if currentPage < pages.count - 1 {
                         Button("Skip") { onComplete() }
@@ -87,6 +88,7 @@ struct OnboardingView: View {
                 }
                 .padding(.horizontal, 28)
                 .padding(.bottom, 48)
+                .accessibilityElement(children: .contain)
             }
         }
     }
