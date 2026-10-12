@@ -39,7 +39,7 @@ struct SettingsView: View {
         NavigationStack {
             Form {
 
-                Section("Your profile") {
+                Section {
                     HStack {
                         ZStack {
                             RoundedRectangle(cornerRadius: 10)
@@ -53,9 +53,11 @@ struct SettingsView: View {
                         }
                     }
                     .padding(.vertical, 4)
+                } header: {
+                    Text("Your profile")
                 }
 
-                Section("Preferences") {
+                Section {
                     Picker("Budget Mode", selection: $selectedBudgetMode) {
                         Text("Weekly").tag("weekly")
                         Text("Monthly").tag("monthly")
@@ -70,6 +72,8 @@ struct SettingsView: View {
                         }
                         .onChange(of: selectedDefaultAccount) { _, val in defaultAccount = val }
                     }
+                } header: {
+                    Text("Preferences")
                 }
 
                 Section {
@@ -105,7 +109,7 @@ struct SettingsView: View {
                     Text("Get a reminder the day before each bill is due.")
                 }
 
-                Section("Account") {
+                Section {
                     Button {
                         NotificationManager.shared.cancelAll()
                         auth.logOut()
@@ -113,12 +117,16 @@ struct SettingsView: View {
                     } label: {
                         Label("Log out", systemImage: "rectangle.portrait.and.arrow.right")
                     }
+                } header: {
+                    Text("Account")
                 }
 
-                Section("Data") {
+                Section {
                     Button(role: .destructive) { showClearConfirm = true } label: {
                         Label("Delete all app data", systemImage: "trash")
                     }
+                } header: {
+                    Text("Data")
                 } footer: {
                     Text("This permanently deletes all saved financial data from this device.")
                 }
