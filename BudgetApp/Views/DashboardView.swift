@@ -29,6 +29,18 @@ struct DashboardView: View {
             .reduce(0) { $0 + $1.balance }
     }
 
+    private var cashAndAssetsTotal: Double {
+        accounts
+            .filter { $0.type != AccountType.creditCard.rawValue }
+            .reduce(0) { $0 + $1.balance }
+    }
+
+    private var creditCardDebt: Double {
+        accounts
+            .filter { $0.type == AccountType.creditCard.rawValue }
+            .reduce(0) { $0 + $1.balance }
+    }
+
     private var billsDueThisWeek: [Subscription] {
         subscriptions.filter { subscription in
             guard subscription.endDate.map({ $0 >= Date() }) ?? true else { return false }
@@ -112,7 +124,14 @@ struct DashboardView: View {
     private var accountsListView: some View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
-                Text("Accounts").font(.headline)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("Accounts").font(.headline)
+                    if !accounts.isEmpty {
+                        Text("Cash & assets \(cashAndAssetsTotal, format: .currency(code: CurrencyFormat.code))")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
                 Spacer()
                 Button {
                     showingAddAccount = true
@@ -127,6 +146,16 @@ struct DashboardView: View {
                     message: "Add a checking, savings, or investment account to start tracking your net worth.",
                     buttonLabel: "Add Account", onButton: { showingAddAccount = true })
             } else {
+                if creditCardDebt > 0 {
+                    HStack(spacing: 5) {
+                        Image(systemName: "creditcard.fill")
+                        Text(creditCardDebt, format: .currency(code: CurrencyFormat.code))
+                        Text("in credit-card debt")
+                    }
+                    .font(.caption)
+                    .foregroundColor(.wineRed)
+                    .padding(.horizontal, 2)
+                }
                 ForEach(accounts) { account in
                     CleanAccountCard(account: account) { accountToEdit = account }
                 }

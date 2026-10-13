@@ -8,16 +8,49 @@ struct CleanAccountCard: View {
     var account: Account
     var onEdit: () -> Void
 
+    private var accountType: AccountType {
+        AccountType(rawValue: account.type) ?? .checking
+    }
+
+    private var icon: String {
+        switch accountType {
+        case .checking: return "building.columns.fill"
+        case .savings: return "leaf.fill"
+        case .investment: return "chart.line.uptrend.xyaxis"
+        case .creditCard: return "creditcard.fill"
+        }
+    }
+
+    private var accent: Color {
+        switch accountType {
+        case .checking: return .burntOrange
+        case .savings: return .pistachioText
+        case .investment: return .steelBlue
+        case .creditCard: return .wineRed
+        }
+    }
+
+    private var balanceLabel: String {
+        accountType == .creditCard ? "Current debt" : account.type
+    }
+
     var body: some View {
-        HStack {
+        HStack(spacing: 12) {
+            Image(systemName: icon)
+                .font(.subheadline.weight(.semibold))
+                .foregroundColor(accent)
+                .frame(width: 40, height: 40)
+                .background(accent.opacity(0.12))
+                .clipShape(Circle())
+
             VStack(alignment: .leading, spacing: 3) {
                 Text(account.name).font(.subheadline).fontWeight(.medium)
-                Text(account.type).font(.caption).foregroundColor(.secondary)
+                Text(balanceLabel).font(.caption).foregroundColor(.secondary)
             }
             Spacer()
             Text(account.balance, format: .currency(code: CurrencyFormat.code))
                 .font(.subheadline).fontWeight(.semibold)
-                .foregroundColor(account.type == AccountType.creditCard.rawValue ? .wineRed : .primary)
+                .foregroundColor(accent)
             Image(systemName: "chevron.right")
                 .font(.caption.weight(.semibold))
                 .foregroundColor(.secondary)
