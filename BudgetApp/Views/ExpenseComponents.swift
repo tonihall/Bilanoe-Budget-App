@@ -89,7 +89,7 @@ struct AddExpenseView: View {
         NavigationStack {
             Form {
                 Section("Details") {
-                    TextField("Expense Name", text: $name)
+                    TextField("What did you buy?", text: $name)
                     TextField("Amount", text: $amount).keyboardType(.decimalPad)
                     Picker("Category", selection: $category) {
                         ForEach(categories, id: \.self) { Text($0).tag($0) }
@@ -104,9 +104,16 @@ struct AddExpenseView: View {
                             ForEach(accounts) { Text("\($0.name) (\($0.type))").tag($0.uuid) }
                         }
                     }
+                } header: {
+                    Text("Paid from")
+                } footer: {
+                    if !accounts.isEmpty {
+                        Text("Saving this expense subtracts the amount from this account.")
+                    }
                 }
             }
             .navigationTitle("New Expense")
+            .navigationBarTitleDisplayMode(.inline)
             .errorAlert(error: $error)
             .onAppear {
                 selectedAccount = accounts.contains { $0.uuid == defaultAccountID }
@@ -158,7 +165,7 @@ struct EditExpenseView: View {
         NavigationStack {
             Form {
                 Section("Details") {
-                    TextField("Expense Name", text: $name)
+                    TextField("What did you buy?", text: $name)
                     TextField("Amount", text: $amount).keyboardType(.decimalPad)
                     Picker("Category", selection: $category) {
                         ForEach(categories, id: \.self) { Text($0).tag($0) }
@@ -267,6 +274,7 @@ struct AddBudgetView: View {
                 }
             }
             .navigationTitle("New Budget")
+            .navigationBarTitleDisplayMode(.inline)
             .errorAlert(error: $error)
             .onAppear { period = budgetMode == "weekly" ? "weekly" : "monthly" }
             .toolbar {

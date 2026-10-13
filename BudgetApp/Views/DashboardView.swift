@@ -56,9 +56,15 @@ struct DashboardView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                safeToSpendView
-                overviewRow
-                accountsListView
+                if accounts.isEmpty {
+                    DashboardGettingStartedCard {
+                        showingAddAccount = true
+                    }
+                } else {
+                    safeToSpendView
+                    overviewRow
+                    accountsListView
+                }
                 Spacer(minLength: 40)
             }
             .padding()

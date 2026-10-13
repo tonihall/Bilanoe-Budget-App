@@ -23,6 +23,11 @@ struct SettingsView: View {
     var goals: [SavingsGoal]          { allGoals.filter         { $0.userID == auth.userID } }
     var snapshots: [NetWorthSnapshot] { allSnapshots.filter     { $0.userID == auth.userID } }
 
+    private var savedRecordCount: Int {
+        accounts.count + expenses.count + budgets.count + subscriptions.count
+            + incomes.count + goals.count + snapshots.count
+    }
+
     @AppStorage("budgetMode")     var budgetMode: String = "weekly"
     @AppStorage("defaultAccount") var defaultAccount: String = ""
     @AppStorage("notificationsOn") var notificationsOn: Bool = true
@@ -49,7 +54,7 @@ struct SettingsView: View {
                         }
                         VStack(alignment: .leading, spacing: 2) {
                             Text(auth.username).font(.subheadline).fontWeight(.medium)
-                            Text("Bilanoe account").font(.caption).foregroundColor(.secondary)
+                            Text("Your Bilanoe profile").font(.caption).foregroundColor(.secondary)
                         }
                     }
                     .padding(.vertical, 4)
@@ -58,7 +63,7 @@ struct SettingsView: View {
                 }
 
                 Section {
-                    Picker("Budget Mode", selection: $selectedBudgetMode) {
+                    Picker("Budget rhythm", selection: $selectedBudgetMode) {
                         Text("Weekly").tag("weekly")
                         Text("Monthly").tag("monthly")
                         Text("Both").tag("both")
@@ -66,18 +71,20 @@ struct SettingsView: View {
                     .onChange(of: selectedBudgetMode) { _, val in budgetMode = val }
 
                     if !accounts.isEmpty {
-                        Picker("Everyday account", selection: $selectedDefaultAccount) {
+                        Picker("Default spending account", selection: $selectedDefaultAccount) {
                             Text("None").tag("")
                             ForEach(accounts) { Text($0.name).tag($0.uuid) }
                         }
                         .onChange(of: selectedDefaultAccount) { _, val in defaultAccount = val }
                     }
                 } header: {
-                    Text("Preferences")
+                    Text("Your preferences")
+                } footer: {
+                    Text("Your default spending account is selected automatically when you add an expense.")
                 }
 
                 Section {
-                    Toggle("Bill reminders", isOn: $notificationsOn)
+                    Toggle("Remind me about bills", isOn: $notificationsOn)
                         .tint(.pistachio)
                         .onChange(of: notificationsOn) { _, enabled in
                             if enabled {
@@ -118,17 +125,30 @@ struct SettingsView: View {
                         Label("Log out", systemImage: "rectangle.portrait.and.arrow.right")
                     }
                 } header: {
-                    Text("Account")
+                    Text("Session")
                 }
 
                 Section {
+                    HStack(spacing: 10) {
+                        Image(systemName: "lock.fill")
+                            .foregroundColor(.pistachioText)
+                        VStack(alignment: .leading, spacing: 2) {
+                            Text("Your data stays on this device")
+                                .font(.subheadline)
+                            Text("\(savedRecordCount) saved item\(savedRecordCount == 1 ? "" : "s")")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .padding(.vertical, 3)
+
                     Button(role: .destructive) { showClearConfirm = true } label: {
-                        Label("Delete all app data", systemImage: "trash")
+                        Label("Delete all financial data", systemImage: "trash")
                     }
                 } header: {
-                    Text("Data")
+                    Text("Data & privacy")
                 } footer: {
-                    Text("This permanently deletes all saved financial data from this device.")
+                    Text("Bilanoe currently stores your budget data locally on this device. Deleting it cannot be undone.")
                 }
 
                 // MARK: App Info

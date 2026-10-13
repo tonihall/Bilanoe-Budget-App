@@ -1,5 +1,66 @@
 import SwiftUI
 
+struct DashboardGettingStartedCard: View {
+    let onAddAccount: () -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 5) {
+                Text("Welcome to Bilanoe")
+                    .font(.title3.weight(.semibold))
+                Text("Start with the money you have today. You can add the rest as you go.")
+                    .font(.subheadline)
+                    .foregroundColor(.secondary)
+            }
+
+            VStack(alignment: .leading, spacing: 12) {
+                DashboardGettingStartedStep(number: 1, title: "Add your first account", detail: "Checking, savings, investment, or credit card", isActive: true)
+                DashboardGettingStartedStep(number: 2, title: "Add bills or expenses", detail: "See where your money is going", isActive: false)
+                DashboardGettingStartedStep(number: 3, title: "Make a plan", detail: "Set a budget or savings goal when you're ready", isActive: false)
+            }
+
+            Button(action: onAddAccount) {
+                Label("Add your first account", systemImage: "plus.circle.fill")
+                    .font(.subheadline.weight(.semibold))
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 12)
+            }
+            .foregroundColor(.white)
+            .background(Color.pistachioText)
+            .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        }
+        .padding()
+        .bilanoeCard()
+    }
+}
+
+private struct DashboardGettingStartedStep: View {
+    let number: Int
+    let title: String
+    let detail: String
+    let isActive: Bool
+
+    var body: some View {
+        HStack(spacing: 10) {
+            Text("\(number)")
+                .font(.caption.weight(.bold))
+                .foregroundColor(isActive ? .white : .secondary)
+                .frame(width: 24, height: 24)
+                .background(isActive ? Color.pistachioText : Color.appSurfaceElevated)
+                .clipShape(Circle())
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(title)
+                    .font(.subheadline.weight(.medium))
+                    .foregroundColor(isActive ? .primary : .secondary)
+                Text(detail)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+        }
+    }
+}
+
 struct DashboardSafeToSpendCard: View {
     let safeToSpend: Double
     let checkingBalance: Double

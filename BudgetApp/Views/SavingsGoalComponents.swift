@@ -118,7 +118,7 @@ struct AddGoalView: View {
         NavigationStack {
             Form {
                 Section("What are you saving for?") {
-                    TextField("e.g. Emergency Fund", text: $name)
+                    TextField("Goal name, e.g. Emergency Fund", text: $name)
                     TextField("Target Amount", text: $targetAmount).keyboardType(.decimalPad)
                 }
                 Section("Icon") {
@@ -150,6 +150,7 @@ struct AddGoalView: View {
                 }
             }
             .navigationTitle("New Goal")
+            .navigationBarTitleDisplayMode(.inline)
             .errorAlert(error: $error)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {

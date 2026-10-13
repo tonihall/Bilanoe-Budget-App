@@ -74,7 +74,7 @@ struct SubscriptionsView: View {
 
                 if activeSubscriptions.isEmpty {
                     EmptyStateView(icon: "calendar.badge.plus", title: "No Bills Yet",
-                        message: "Add rent, utilities, subscriptions, or anything that repeats every month.")
+                        message: "Add rent, utilities, subscriptions, or anything that repeats every month. We'll include upcoming bills in Safe to Spend.")
                         .padding()
                         .bilanoeCard()
                 } else if !laterBills.isEmpty {

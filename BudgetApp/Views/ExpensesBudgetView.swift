@@ -230,8 +230,11 @@ struct ExpensesBudgetView: View {
 
                     if expenses.isEmpty {
                         EmptyStateView(icon: "receipt", title: "No Expenses Yet",
-                            message: "Use Add expense to log your first transaction.",
-                            buttonLabel: "Add Expense", onButton: { showAddExpense = true })
+                            message: accounts.isEmpty
+                                ? "Add an account on Home first, then log your first transaction here."
+                                : "Start with one purchase. Bilanoe will update the account you choose.",
+                            buttonLabel: accounts.isEmpty ? nil : "Add Expense",
+                            onButton: accounts.isEmpty ? nil : { showAddExpense = true })
                     } else if filteredExpenses.isEmpty {
                         EmptyStateView(
                             icon: searchText.isEmpty ? "calendar.badge.exclamationmark" : "magnifyingglass",

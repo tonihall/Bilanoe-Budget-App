@@ -119,12 +119,23 @@ struct EditAccountView: View {
         NavigationStack {
             Form {
                 Section {
-                    TextField("Account Name", text: $name)
+                    TextField("Account name", text: $name)
                     Picker("Account Type", selection: $type) {
                         ForEach(AccountType.allCases) { type in Text(type.rawValue).tag(type) }
                     }
+                } header: {
+                    Text("Account details")
+                }
+
+                Section {
                     TextField("Balance", value: $balance, format: .currency(code: CurrencyFormat.code))
                         .keyboardType(.decimalPad)
+                } header: {
+                    Text("Current balance")
+                } footer: {
+                    Text(type == .creditCard
+                         ? "Enter the amount you currently owe on this card."
+                         : "Enter the balance currently available in this account.")
                 }
                 Section {
                     Button(role: .destructive) { showDeleteConfirm = true } label: {
@@ -133,6 +144,7 @@ struct EditAccountView: View {
                 }
             }
             .navigationTitle("Edit Account")
+            .navigationBarTitleDisplayMode(.inline)
             .errorAlert(error: $error)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
@@ -193,14 +205,27 @@ struct AddAccountView: View {
     var body: some View {
         NavigationStack {
             Form {
-                TextField("Account Name", text: $name)
-                Picker("Account Type", selection: $type) {
-                    ForEach(AccountType.allCases) { type in Text(type.rawValue).tag(type) }
+                Section {
+                    TextField("Account name", text: $name)
+                    Picker("Account Type", selection: $type) {
+                        ForEach(AccountType.allCases) { type in Text(type.rawValue).tag(type) }
+                    }
+                } header: {
+                    Text("Account details")
                 }
-                TextField("Starting Balance", value: $balance, format: .currency(code: CurrencyFormat.code))
-                    .keyboardType(.decimalPad)
+                Section {
+                    TextField("Starting balance", value: $balance, format: .currency(code: CurrencyFormat.code))
+                        .keyboardType(.decimalPad)
+                } header: {
+                    Text("Balance")
+                } footer: {
+                    Text(type == .creditCard
+                         ? "Enter the amount you currently owe on this card."
+                         : "Use the balance that is currently in this account.")
+                }
             }
             .navigationTitle("Add Account")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {

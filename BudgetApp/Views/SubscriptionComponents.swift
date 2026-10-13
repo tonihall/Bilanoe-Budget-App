@@ -68,9 +68,9 @@ struct AddSubscriptionView: View {
         NavigationStack {
             Form {
                 Section("Details") {
-                    TextField("Bill Name", text: $name)
+                    TextField("Bill name", text: $name)
                         .textContentType(.organizationName)
-                    TextField("Monthly Amount", text: $amount).keyboardType(.decimalPad)
+                    TextField("Amount due each month", text: $amount).keyboardType(.decimalPad)
                     if !validationMessage.isEmpty {
                         Text(validationMessage)
                             .font(.caption)
@@ -84,6 +84,7 @@ struct AddSubscriptionView: View {
                 }
             }
             .navigationTitle("Add Bill")
+            .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
