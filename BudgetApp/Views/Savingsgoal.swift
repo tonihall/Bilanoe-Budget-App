@@ -12,6 +12,7 @@ struct SavingsGoalsView: View {
     var accounts: [Account]  { allAccounts.filter { $0.userID == auth.userID } }
 
     @State private var showAddGoal = false
+    @State private var goalToEdit: SavingsGoal? = nil
     @State private var goalToContribute: SavingsGoal? = nil
     @State private var goalToWithdraw: SavingsGoal? = nil
     @State private var goalToDelete: SavingsGoal? = nil
@@ -41,6 +42,10 @@ struct SavingsGoalsView: View {
 
                 if !goals.isEmpty {
                     summaryCard
+                    Text("Tap a goal to edit it")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
 
                 if showSuccessBanner {
@@ -67,6 +72,7 @@ struct SavingsGoalsView: View {
                         ForEach(activeGoals) { goal in
                             GoalCard(
                                 goal: goal,
+                                onEdit: { goalToEdit = goal },
                                 onContribute: { goalToContribute = goal },
                                 onWithdraw: goal.currentAmount > 0 ? { goalToWithdraw = goal } : nil
                             )
@@ -108,6 +114,7 @@ struct SavingsGoalsView: View {
                             ForEach(completedGoals) { goal in
                                 GoalCard(
                                     goal: goal,
+                                    onEdit: { goalToEdit = goal },
                                     onContribute: nil,
                                     onWithdraw: goal.currentAmount > 0 ? { goalToWithdraw = goal } : nil
                                 )
@@ -139,6 +146,9 @@ struct SavingsGoalsView: View {
                 do { try modelContext.safeSave(); HapticManager.medium() }
                 catch { self.error = .saveFailed; HapticManager.error() }
             }
+        }
+        .sheet(item: $goalToEdit) { goal in
+            EditGoalView(goal: goal)
         }
         .sheet(item: $goalToContribute) { goal in
             ContributeView(goal: goal, accounts: accounts) { amount, accountID, deductFromAccount in

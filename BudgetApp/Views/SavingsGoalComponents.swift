@@ -7,6 +7,7 @@ import SwiftData
 
 struct GoalCard: View {
     var goal: SavingsGoal
+    var onEdit: (() -> Void)?
     var onContribute: (() -> Void)?
     var onWithdraw: (() -> Void)?
 
@@ -94,6 +95,8 @@ struct GoalCard: View {
         .padding()
         .background(Color(UIColor.secondarySystemBackground))
         .cornerRadius(14)
+        .contentShape(Rectangle())
+        .onTapGesture { onEdit?() }
     }
 }
 
@@ -166,6 +169,123 @@ struct AddGoalView: View {
                     Button("Cancel") { dismiss() }.foregroundColor(.pistachio)
                 }
             }
+        }
+    }
+}
+
+// MARK: - Edit Goal View
+
+struct EditGoalView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+
+    let goal: SavingsGoal
+    @State private var name: String
+    @State private var targetAmount: String
+    @State private var hasDeadline: Bool
+    @State private var deadline: Date
+    @State private var selectedEmoji: String
+    @State private var error: AppError? = nil
+
+    private let emojis = ["🎯","🏠","🚗","✈️","💍","🎓","💻","📱","🏋️","🐾","🛡️","🌴"]
+
+    init(goal: SavingsGoal) {
+        self.goal = goal
+        _name = State(initialValue: goal.name)
+        _targetAmount = State(initialValue: String(format: "%.2f", goal.targetAmount))
+        _hasDeadline = State(initialValue: goal.deadline != nil)
+        _deadline = State(initialValue: goal.deadline ?? Date())
+        _selectedEmoji = State(initialValue: goal.emoji)
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("Goal name", text: $name)
+                    TextField("Target amount", text: $targetAmount)
+                        .keyboardType(.decimalPad)
+                    HStack {
+                        Text("Already saved").foregroundColor(.secondary)
+                        Spacer()
+                        Text(goal.currentAmount, format: .currency(code: CurrencyFormat.code))
+                            .fontWeight(.semibold)
+                            .foregroundColor(.pistachioText)
+                    }
+                } header: {
+                    Text("Goal details")
+                } footer: {
+                    Text("Your target cannot be lower than the amount already saved.")
+                }
+
+                Section {
+                    LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 6), spacing: 12) {
+                        ForEach(emojis, id: \.self) { emoji in
+                            Text(emoji)
+                                .font(.title2)
+                                .frame(width: 44, height: 44)
+                                .background(selectedEmoji == emoji ? Color.pistachioSubtle : Color.clear)
+                                .cornerRadius(8)
+                                .onTapGesture { selectedEmoji = emoji }
+                        }
+                    }
+                    .padding(.vertical, 4)
+                } header: {
+                    Text("Icon")
+                }
+
+                Section {
+                    Toggle("Set a deadline", isOn: $hasDeadline)
+                    if hasDeadline {
+                        DatePicker("Target date", selection: $deadline, in: Date()..., displayedComponents: .date)
+                    }
+                } header: {
+                    Text("Deadline")
+                }
+            }
+            .navigationTitle("Edit Goal")
+            .navigationBarTitleDisplayMode(.inline)
+            .errorAlert(error: $error)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") { saveChanges() }
+                        .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || targetAmount.isEmpty)
+                        .foregroundColor(.pistachio)
+                }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }.foregroundColor(.pistachio)
+                }
+            }
+        }
+    }
+
+    private func saveChanges() {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else {
+            error = .custom("Please enter a goal name.")
+            return
+        }
+        guard let newTarget = Double(targetAmount), newTarget > 0 else {
+            error = .invalidAmount
+            return
+        }
+        guard newTarget >= goal.currentAmount else {
+            error = .custom("Your target cannot be lower than the amount already saved.")
+            return
+        }
+
+        goal.name = trimmedName
+        goal.targetAmount = newTarget
+        goal.deadline = hasDeadline ? deadline : nil
+        goal.emoji = selectedEmoji
+
+        do {
+            try modelContext.safeSave()
+            HapticManager.medium()
+            dismiss()
+        } catch {
+            self.error = .saveFailed
+            HapticManager.error()
         }
     }
 }

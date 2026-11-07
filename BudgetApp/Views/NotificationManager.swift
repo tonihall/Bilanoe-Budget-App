@@ -72,6 +72,13 @@ class NotificationManager {
 
     func cancelAll() {
         UNUserNotificationCenter.current().removeAllPendingNotificationRequests()
+        clearBadge()
+    }
+
+    // MARK: - App Icon Badge
+
+    func clearBadge() {
+        UNUserNotificationCenter.current().setBadgeCount(0)
     }
 
     // MARK: - Format Currency

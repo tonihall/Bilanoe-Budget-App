@@ -4,6 +4,7 @@ import UserNotifications
 
 struct SettingsView: View {
     @EnvironmentObject var auth: AuthManager
+    @EnvironmentObject private var appLock: AppLockManager
     @Environment(\.modelContext) private var modelContext
     @Environment(\.dismiss) var dismiss
 
@@ -32,12 +33,15 @@ struct SettingsView: View {
     @AppStorage("defaultAccount") var defaultAccount: String = ""
     @AppStorage("notificationsOn") var notificationsOn: Bool = true
     @AppStorage("hapticsOn")       var hapticsOn: Bool = true
+    @AppStorage("appLockEnabled")   var appLockEnabled: Bool = false
 
     @State private var selectedBudgetMode: String = "weekly"
     @State private var selectedDefaultAccount: String = ""
 
     @State private var notifPermissionDenied = false
     @State private var showClearConfirm = false
+    @State private var exportURL: URL? = nil
+    @State private var showingShareSheet = false
     @State private var error: AppError? = nil
 
     var body: some View {
@@ -117,6 +121,23 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    Toggle("Require Face ID or passcode", isOn: $appLockEnabled)
+                        .tint(.pistachio)
+                        .onChange(of: appLockEnabled) { _, enabled in
+                            if enabled {
+                                appLock.lock()
+                                appLock.authenticate()
+                            } else {
+                                appLock.unlock()
+                            }
+                        }
+                } header: {
+                    Text("App lock")
+                } footer: {
+                    Text("When enabled, Bilanoe asks for Face ID or your device passcode whenever you return to the app.")
+                }
+
+                Section {
                     Button {
                         NotificationManager.shared.cancelAll()
                         auth.logOut()
@@ -141,6 +162,10 @@ struct SettingsView: View {
                         }
                     }
                     .padding(.vertical, 3)
+
+                    Button { exportData() } label: {
+                        Label("Export expenses & budgets", systemImage: "square.and.arrow.up")
+                    }
 
                     Button(role: .destructive) { showClearConfirm = true } label: {
                         Label("Delete all financial data", systemImage: "trash")
@@ -199,8 +224,30 @@ struct SettingsView: View {
             } message: {
                 Text("This will permanently delete all your accounts, expenses, budgets, subscriptions, income history, and goals. This cannot be undone.")
             }
+            .sheet(isPresented: $showingShareSheet, onDismiss: removeExportFile) {
+                if let exportURL {
+                    ShareSheet(activityItems: [exportURL], onComplete: removeExportFile)
+                }
+            }
        }
    }
+
+    private func exportData() {
+        do {
+            exportURL = try DataExportService.createCSV(expenses: expenses, budgets: budgets)
+            showingShareSheet = true
+        } catch {
+            self.error = .custom(error.localizedDescription)
+        }
+    }
+
+    private func removeExportFile() {
+        if let exportURL {
+            try? FileManager.default.removeItem(at: exportURL)
+        }
+        self.exportURL = nil
+        showingShareSheet = false
+    }
 
     private func clearUserData() {
         NotificationManager.shared.cancelAll()

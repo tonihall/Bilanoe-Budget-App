@@ -14,6 +14,7 @@ struct SubscriptionsView: View {
 
     @State private var showAddSubscription = false
     @State private var subToPay: Subscription? = nil
+    @State private var subToEdit: Subscription? = nil
     @State private var selectedPayAccount: String = ""
     @State private var paidConfirmName: String = ""
     @State private var showPaidBanner = false
@@ -49,6 +50,13 @@ struct SubscriptionsView: View {
                 .background(Color.pistachioText)
                 .clipShape(RoundedRectangle(cornerRadius: 14, style: .continuous))
 
+                if !activeSubscriptions.isEmpty {
+                    Text("Tap any bill to edit it")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
                 if showPaidBanner {
                     HStack(spacing: 10) {
                         Image(systemName: "checkmark.circle.fill").foregroundColor(.pistachio)
@@ -62,13 +70,13 @@ struct SubscriptionsView: View {
                 if !overdue.isEmpty {
                     sectionHeader("⚠️ Overdue")
                     ForEach(overdue) { sub in
-                        SubscriptionCard(sub: sub, urgent: true, isOverdue: true) { initiatePay(sub) }
+                        SubscriptionCard(sub: sub, urgent: true, isOverdue: true, onEdit: { subToEdit = sub }) { initiatePay(sub) }
                     }
                 }
                 if !dueThisWeek.isEmpty {
                     sectionHeader("Due This Week")
                     ForEach(dueThisWeek) { sub in
-                        SubscriptionCard(sub: sub, urgent: true, isOverdue: false) { initiatePay(sub) }
+                        SubscriptionCard(sub: sub, urgent: true, isOverdue: false, onEdit: { subToEdit = sub }) { initiatePay(sub) }
                     }
                 }
 
@@ -81,7 +89,7 @@ struct SubscriptionsView: View {
                     sectionHeader(overdue.isEmpty && dueThisWeek.isEmpty ? "Next up" : "Later")
                     List {
                         ForEach(laterBills) { sub in
-                            SubscriptionCard(sub: sub, urgent: false, isOverdue: false) { initiatePay(sub) }
+                            SubscriptionCard(sub: sub, urgent: false, isOverdue: false, onEdit: { subToEdit = sub }) { initiatePay(sub) }
                                 .listRowInsets(EdgeInsets()).listRowBackground(Color.clear).padding(.vertical, 4)
                                 .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                     Button(role: .destructive) {
@@ -117,6 +125,14 @@ struct SubscriptionsView: View {
                         }
                     }
                 } catch { self.error = .saveFailed }
+            }
+        }
+        .sheet(item: $subToEdit) { sub in
+            EditSubscriptionView(subscription: sub) {
+                NotificationManager.shared.cancelReminder(for: sub)
+                if notificationsOn {
+                    NotificationManager.shared.scheduleReminder(for: sub)
+                }
             }
         }
         .sheet(item: $subToPay) { sub in

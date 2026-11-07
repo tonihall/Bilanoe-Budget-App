@@ -19,6 +19,7 @@ struct ExpensesBudgetView: View {
     @State private var showAddExpense = false
     @State private var showAddBudget = false
     @State private var expenseToEdit: Expense? = nil
+    @State private var budgetToEdit: MonthlyBudget? = nil
     @State private var expenseFilter: ExpenseFilter = .month
     @State private var searchText: String = ""
     @State private var error: AppError? = nil
@@ -302,6 +303,9 @@ struct ExpensesBudgetView: View {
                 catch { self.error = .saveFailed; HapticManager.error() }
             }
         }
+        .sheet(item: $budgetToEdit) { budget in
+            EditBudgetView(budget: budget, existingBudgets: budgets)
+        }
     }
 
     private func budgetSection(title: String, period: String, periodBudgets: [MonthlyBudget], granularity: Calendar.Component) -> some View {
@@ -317,9 +321,14 @@ struct ExpensesBudgetView: View {
                     message: "Set a budget for categories like groceries, gas, or entertainment.",
                     buttonLabel: "Add Budget", onButton: { showAddBudget = true })
             } else {
+                Text("Tap a category to edit it")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
                 List {
                     ForEach(periodBudgets) { budget in
-                        BudgetCategoryRow(budget: budget, expenses: expenses, granularity: granularity)
+                        BudgetCategoryRow(budget: budget, expenses: expenses, granularity: granularity) {
+                            budgetToEdit = budget
+                        }
                             .listRowInsets(EdgeInsets()).listRowBackground(Color.clear).padding(.vertical, 4)
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                 Button(role: .destructive) {

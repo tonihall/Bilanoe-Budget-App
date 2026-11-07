@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 // Supporting views for the Bills feature.
 
@@ -8,6 +9,7 @@ struct SubscriptionCard: View {
     var sub: Subscription
     var urgent: Bool
     var isOverdue: Bool
+    var onEdit: (() -> Void)? = nil
     var onMarkPaid: () -> Void
 
     var daysUntilDue: Int { Calendar.current.dateComponents([.day], from: Date(), to: sub.dueDate).day ?? 0 }
@@ -49,6 +51,112 @@ struct SubscriptionCard: View {
         .padding()
         .background(Color(UIColor.secondarySystemBackground))
         .cornerRadius(14)
+        .contentShape(Rectangle())
+        .onTapGesture { onEdit?() }
+    }
+}
+
+// MARK: - Edit Subscription
+
+struct EditSubscriptionView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+
+    let subscription: Subscription
+    var onSaved: () -> Void
+
+    @State private var name: String
+    @State private var amount: String
+    @State private var dueDate: Date
+    @State private var hasEndDate: Bool
+    @State private var endDate: Date
+    @State private var validationMessage = ""
+    @State private var error: AppError? = nil
+
+    init(subscription: Subscription, onSaved: @escaping () -> Void) {
+        self.subscription = subscription
+        self.onSaved = onSaved
+        _name = State(initialValue: subscription.name)
+        _amount = State(initialValue: String(format: "%.2f", subscription.amount))
+        _dueDate = State(initialValue: subscription.dueDate)
+        _hasEndDate = State(initialValue: subscription.endDate != nil)
+        _endDate = State(initialValue: subscription.endDate ?? subscription.dueDate)
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    TextField("Bill name", text: $name)
+                        .textContentType(.organizationName)
+                    TextField("Amount due each month", text: $amount)
+                        .keyboardType(.decimalPad)
+                    if !validationMessage.isEmpty {
+                        Text(validationMessage)
+                            .font(.caption)
+                            .foregroundColor(.wineRed)
+                    }
+                } header: {
+                    Text("Details")
+                }
+
+                Section {
+                    DatePicker("Next due date", selection: $dueDate, displayedComponents: .date)
+                    Toggle("Has end date", isOn: $hasEndDate)
+                    if hasEndDate {
+                        DatePicker("End date", selection: $endDate, displayedComponents: .date)
+                    }
+                } header: {
+                    Text("Dates")
+                } footer: {
+                    Text("Changing the next due date updates the bill reminder.")
+                }
+            }
+            .navigationTitle("Edit Bill")
+            .navigationBarTitleDisplayMode(.inline)
+            .errorAlert(error: $error)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") { saveChanges() }
+                        .disabled(name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || amount.isEmpty)
+                        .foregroundColor(.pistachio)
+                }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }.foregroundColor(.pistachio)
+                }
+            }
+        }
+    }
+
+    private func saveChanges() {
+        let trimmedName = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmedName.isEmpty else {
+            validationMessage = "Enter a bill name."
+            return
+        }
+        guard let newAmount = Double(amount), newAmount > 0 else {
+            validationMessage = "Enter a monthly amount greater than zero."
+            return
+        }
+        guard !hasEndDate || endDate >= dueDate else {
+            validationMessage = "The end date must be on or after the next due date."
+            return
+        }
+
+        subscription.name = trimmedName
+        subscription.amount = newAmount
+        subscription.dueDate = dueDate
+        subscription.endDate = hasEndDate ? endDate : nil
+
+        do {
+            try modelContext.safeSave()
+            onSaved()
+            HapticManager.medium()
+            dismiss()
+        } catch {
+            self.error = .saveFailed
+            HapticManager.error()
+        }
     }
 }
 

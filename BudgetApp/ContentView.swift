@@ -2,23 +2,32 @@ import SwiftUI
 
 struct ContentView: View {
     @EnvironmentObject var auth: AuthManager
+    @EnvironmentObject private var appLock: AppLockManager
     @AppStorage("hasSeenOnboarding") var hasSeenOnboarding: Bool = false
 
     var body: some View {
-        Group {
-            if !hasSeenOnboarding {
-                OnboardingView {
-                    withAnimation(.easeInOut(duration: 0.4)) {
-                        hasSeenOnboarding = true
+        ZStack {
+            Group {
+                if !hasSeenOnboarding {
+                    OnboardingView {
+                        withAnimation(.easeInOut(duration: 0.4)) {
+                            hasSeenOnboarding = true
+                        }
                     }
+                    .transition(.opacity)
+                } else if auth.isLoggedIn {
+                    MainTabView()
+                        .transition(.opacity)
+                } else {
+                    LoginView()
+                        .transition(.opacity)
                 }
-                .transition(.opacity)
-            } else if auth.isLoggedIn {
-                MainTabView()
+            }
+
+            if auth.isLoggedIn && appLock.isLocked {
+                AppLockView()
                     .transition(.opacity)
-            } else {
-                LoginView()
-                    .transition(.opacity)
+                    .zIndex(1)
             }
         }
         .animation(.easeInOut(duration: 0.4), value: hasSeenOnboarding)

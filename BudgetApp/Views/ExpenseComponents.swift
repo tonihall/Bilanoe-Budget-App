@@ -8,6 +8,7 @@ struct BudgetCategoryRow: View {
     var budget: MonthlyBudget
     var expenses: [Expense]
     var granularity: Calendar.Component
+    var onEdit: (() -> Void)? = nil
 
     var spentInCategory: Double {
         expenses.filter {
@@ -39,6 +40,8 @@ struct BudgetCategoryRow: View {
             }
         }
         .padding(12).background(Color.appSurfaceElevated).cornerRadius(10)
+        .contentShape(Rectangle())
+        .onTapGesture { onEdit?() }
     }
 }
 
@@ -291,6 +294,105 @@ struct AddBudgetView: View {
                     Button("Cancel") { dismiss() }.foregroundColor(.pistachio)
                 }
             }
+        }
+    }
+}
+
+struct EditBudgetView: View {
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
+
+    let budget: MonthlyBudget
+    let existingBudgets: [MonthlyBudget]
+    private let categories = ExpenseCategory.allCases.map(\.rawValue)
+
+    @State private var category: String
+    @State private var amount: String
+    @State private var period: String
+    @State private var error: AppError? = nil
+
+    init(budget: MonthlyBudget, existingBudgets: [MonthlyBudget]) {
+        self.budget = budget
+        self.existingBudgets = existingBudgets
+        _category = State(initialValue: budget.category)
+        _amount = State(initialValue: String(format: "%.2f", budget.budgetAmount))
+        _period = State(initialValue: budget.period)
+    }
+
+    private var conflictsWithExistingBudget: Bool {
+        existingBudgets.contains {
+            $0.id != budget.id && $0.category == category && $0.period == period
+        }
+    }
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    Picker("Category", selection: $category) {
+                        ForEach(categories, id: \.self) { Text($0).tag($0) }
+                    }
+                    TextField("Budget amount", text: $amount)
+                        .keyboardType(.decimalPad)
+                } header: {
+                    Text("Budget details")
+                }
+
+                Section {
+                    Picker("Period", selection: $period) {
+                        Text("Weekly").tag("weekly")
+                        Text("Monthly").tag("monthly")
+                    }
+                    .pickerStyle(.segmented)
+                } header: {
+                    Text("Timing")
+                }
+
+                if conflictsWithExistingBudget {
+                    Section {
+                        Label("A \(period) budget for \(category) already exists.", systemImage: "exclamationmark.triangle.fill")
+                            .font(.caption)
+                            .foregroundColor(.orange)
+                    }
+                }
+            }
+            .navigationTitle("Edit Budget")
+            .navigationBarTitleDisplayMode(.inline)
+            .errorAlert(error: $error)
+            .toolbar {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button("Save") { saveChanges() }
+                        .disabled(amount.isEmpty || conflictsWithExistingBudget)
+                        .foregroundColor(.pistachio)
+                }
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Cancel") { dismiss() }.foregroundColor(.pistachio)
+                }
+            }
+        }
+    }
+
+    private func saveChanges() {
+        guard let newAmount = Double(amount), newAmount > 0 else {
+            error = .invalidAmount
+            return
+        }
+        guard !conflictsWithExistingBudget else {
+            error = .custom("A \(period) budget for \(category) already exists.")
+            return
+        }
+
+        budget.category = category
+        budget.budgetAmount = newAmount
+        budget.period = period
+
+        do {
+            try modelContext.safeSave()
+            HapticManager.medium()
+            dismiss()
+        } catch {
+            self.error = .saveFailed
+            HapticManager.error()
         }
     }
 }
